@@ -1,41 +1,54 @@
-name: Node.js CI
+# name: Node.js CI
 
-on:
-  push:
-    branches: [ Development ]
-  pull_request:
-    branches: [ Development ]
+# on:
+#   push:
+#     branches: [ Development ]
+#   pull_request:
+#     branches: [ Development ]
 
+# jobs:
+#   build:
+
+#     runs-on: ubuntu-latest
+
+#     strategy:
+#       matrix:
+#         node-version: [14.x]
+
+#     steps:
+#     - uses: actions/checkout@v2
+#     - name: Set env to Development
+#       if: endsWith(github.ref, '/Development')
+#       run: |
+#         echo $ENV_DEV | base64 --decode > .env
+
+#     - name: Set env to Stage
+#       if: endsWith(github.ref, '/Stage')
+#       run: |
+#         echo $ENV_STAGE | base64 --decode > .env
+
+#     - name: Set env to Production
+#       if: endsWith(github.ref, '/Production')
+#       run: |
+#         echo $ENV_PROD | base64 --decode > .env
+
+#     - name: Use Node.js ${{ matrix.node-version }}
+#       uses: actions/setup-node@v1
+#       with:
+#         node-version: ${{ matrix.node-version }}
+#     - run: tar -cvf ./deploy.tar ./.env ./* 
+#     - run: npm install caprover -g
+#     - run: caprover deploy -h ${{secrets.CAP_URL}} -p ${{secrets.CAP_PASSWD}} -a ${GITHUB_REPOSITORY#*/} -t ./deploy.tar
+name: learn-github-actions
+on: [push]
 jobs:
-  build:
-
+  check-bats-version:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [14.x]
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Set env to Development
-      if: endsWith(github.ref, '/Development')
-      run: |
-        echo $ENV_DEV | base64 --decode > .env
-
-    - name: Set env to Stage
-      if: endsWith(github.ref, '/Stage')
-      run: |
-        echo $ENV_STAGE | base64 --decode > .env
-
-    - name: Set env to Production
-      if: endsWith(github.ref, '/Production')
-      run: |
-        echo $ENV_PROD | base64 --decode > .env
-
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: tar -cvf ./deploy.tar ./.env ./* 
-    - run: npm install caprover -g
-    - run: caprover deploy -h ${{secrets.CAP_URL}} -p ${{secrets.CAP_PASSWD}} -a ${GITHUB_REPOSITORY#*/} -t ./deploy.tar
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - run: npm install -g bats
+      - run: bats -v
+      # - uses: ./.github/actions/hello-world-action
