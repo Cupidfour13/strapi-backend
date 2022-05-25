@@ -38,5 +38,10 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: ls
     - run: tar -cvf ./deploy.tar ./.env ./* 
+    - name: Upload deploy file
+      uses: actions/upload-artifact@v3
+      with:
+        name: deploy-tar
+        path: deploy.tar
     - run: npm install caprover -g
     - run: caprover deploy -h ${{secrets.CAP_URL}} -p ${{secrets.CAP_PASSWD}} -a ${GITHUB_REPOSITORY#*/} -t ./deploy.tar
